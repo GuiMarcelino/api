@@ -1,5 +1,5 @@
-from flask import Flask, app, request
-from flask_restful import Resource, Api
+from flask import Flask, app, request, jsonify
+from flask_restful import Resource, Api, reqparse
 
 
 
@@ -10,6 +10,11 @@ exemplo_banco_de_dados = {'nome': 'Guilherme',
                           'sobrenome': 'Marcelino',
                           'idade': 30}
 
+novo_registro = None
+
+parser = reqparse.RequestParser()
+parser.add_argument('usuario', type=str)
+parser.add_argument('senha', type=str)
 
 class BancoDeDados(Resource):
     def get(self):
@@ -24,6 +29,11 @@ class BancoDeDados(Resource):
        resultado = exemplo_banco_de_dados.pop('idade')
        return resultado
 
+    def post(self):
+        args = parser.parse_args()
+        novo_registro = {'usuario': args['usuario'],
+                         'senha': args['senha']}
+        return jsonify(novo_registro)
 
 api.add_resource(BancoDeDados, '/')
 
